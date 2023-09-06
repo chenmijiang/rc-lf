@@ -5,9 +5,11 @@ interface Options {
   expiredTime?: number;
 }
 
-export function useLocalForage<TState = any>(key: string, defaultValue: TState, options?: Options) {
-  console.log('🚀 ~ options:', options);
-
+export function useLocalForage<TState = any>(
+  key: string,
+  defaultValue: TState,
+  _options?: Options
+) {
   const [value, setValue] = useState<TState>(defaultValue);
   const [loding, setLoding] = useState<boolean>(false);
 

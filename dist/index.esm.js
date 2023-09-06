@@ -2552,8 +2552,7 @@ var localforage = {exports: {}};
 var localforageExports = localforage.exports;
 var localForage = /*@__PURE__*/getDefaultExportFromCjs(localforageExports);
 
-function useLocalForage(key, defaultValue, options) {
-  console.log("\uD83D\uDE80 ~ options:", options);
+function useLocalForage(key, defaultValue, _options) {
   var _a = useState(defaultValue), value = _a[0], setValue = _a[1];
   var _b = useState(false), loding = _b[0], setLoding = _b[1];
   if (defaultValue === null) {

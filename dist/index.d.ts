@@ -1,7 +1,7 @@
 interface Options {
     expiredTime?: number;
 }
-export declare function useLocalForage<TState = any>(key: string, defaultValue: TState, options?: Options): {
+export declare function useLocalForage<TState = any>(key: string, defaultValue: TState, _options?: Options): {
     value: TState;
     set: (val: TState) => void;
     remove: () => void;
