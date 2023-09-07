@@ -1,10 +1,3 @@
-interface Options {
-    expiredTime?: number;
-}
-export declare function useLocalForage<TState = any>(key: string, defaultValue: TState, _options?: Options): {
-    value: TState;
-    set: (val: TState) => void;
-    remove: () => void;
-    loding: boolean;
-};
-export {};
+import { useLocalForage } from './useLocalForage';
+import { RCLocalForageProvider } from './RCLocalForage';
+export { useLocalForage, RCLocalForageProvider };

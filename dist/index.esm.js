@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -2552,16 +2552,30 @@ var localforage = {exports: {}};
 var localforageExports = localforage.exports;
 var localForage = /*@__PURE__*/getDefaultExportFromCjs(localforageExports);
 
+var clientCache = /* @__PURE__ */ new Map();
+var RCLocalForageContext = React.createContext({});
+var RCLocalForageProvider = function(_a) {
+  var children = _a.children, _b = _a.config, config = _b === void 0 ? {} : _b;
+  return React.createElement(RCLocalForageContext.Provider, { value: config }, children);
+};
+
 function useLocalForage(key, defaultValue, _options) {
   var _a = useState(defaultValue), value = _a[0], setValue = _a[1];
   var _b = useState(false), loding = _b[0], setLoding = _b[1];
   if (defaultValue === null) {
     throw new Error("defaultValue must be not null");
   }
+  var context = useContext(RCLocalForageContext);
+  if (!clientCache.has(context)) {
+    clientCache.set(context, localForage.createInstance(context));
+  }
+  var client = clientCache.get(context) || localForage;
   useEffect(function() {
     setLoding(true);
-    localForage.getItem(key).then(function(val) {
-      setValue(val);
+    client.getItem(key).then(function(val) {
+      if (val !== null) {
+        setValue(val);
+      }
       setLoding(false);
     }).catch(function(err) {
       setLoding(false);
@@ -2569,14 +2583,22 @@ function useLocalForage(key, defaultValue, _options) {
     });
   }, []);
   var set = function(val) {
-    setValue(val);
-    localForage.setItem(key, val);
+    client.setItem(key, val).then(function() {
+      return client.getItem(key);
+    }).then(function(val2) {
+      setValue(val2);
+    }).catch(function(err) {
+      throw new Error(err);
+    });
   };
   var remove = function() {
-    setValue(defaultValue);
-    localForage.removeItem(key);
+    client.removeItem(key).then(function() {
+      setValue(void 0);
+    }).catch(function(err) {
+      throw new Error(err);
+    });
   };
   return { value: value, set: set, remove: remove, loding: loding };
 }
 
-export { useLocalForage };
+export { RCLocalForageProvider, useLocalForage };
