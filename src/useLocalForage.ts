@@ -16,11 +16,14 @@ export function useLocalForage<TState = any>(
 
   const context = useContext(RCLocalForageContext);
 
-  if (!clientCache.has(context)) {
-    clientCache.set(context, localForage.createInstance(context));
-  }
+  let client: LocalForage = localForage;
 
-  const client = clientCache.get(context) || localForage;
+  if (Object.keys(context).length > 0) {
+    if (!clientCache.has(context)) {
+      clientCache.set(context, localForage.createInstance(context));
+    }
+    client = clientCache.get(context) as LocalForage;
+  }
 
   useEffect(() => {
     setLoading(true);
