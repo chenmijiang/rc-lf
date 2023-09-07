@@ -1,17 +1,9 @@
 import React from 'react';
-import localforage from 'localforage';
 
-export type LocalForageOptions = Parameters<(typeof localforage)['createInstance']>[0];
-
-export type RCLocalForageProvider = {
-  children: React.ReactNode;
-  config?: LocalForageOptions;
-};
-
-export const clientCache = new Map<LocalForageOptions, LocalForage>();
+import { RCLocalForageProviderProps } from './type';
 
 export const RCLocalForageContext = React.createContext<LocalForageOptions>({});
 
-export const RCLocalForageProvider = ({ children, config = {} }: RCLocalForageProvider) => {
+export const RCLocalForageProvider = ({ children, config = {} }: RCLocalForageProviderProps) => {
   return <RCLocalForageContext.Provider value={config}>{children}</RCLocalForageContext.Provider>;
 };

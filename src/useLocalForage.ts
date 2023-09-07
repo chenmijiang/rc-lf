@@ -1,22 +1,18 @@
 import { useState, useEffect, useContext } from 'react';
 import localForage from 'localforage';
-import { RCLocalForageContext, clientCache } from './RCLocalForage';
+import { RCLocalForageContext } from './RCLocalForage';
 
-interface Options {
-  expire?: number;
-}
+import { ExtraOptions } from './type';
+
+export const clientCache = new Map<LocalForageOptions, LocalForage>();
 
 export function useLocalForage<TState = any>(
   key: string,
   defaultValue: TState,
-  _options?: Options
+  options?: ExtraOptions
 ) {
   const [value, setValue] = useState<TState | undefined>(defaultValue);
-  const [loding, setLoding] = useState<boolean>(false);
-
-  if (defaultValue === null) {
-    throw new Error('defaultValue must be not null');
-  }
+  const [loading, setLoading] = useState<boolean>(false);
 
   const context = useContext(RCLocalForageContext);
 
@@ -27,18 +23,18 @@ export function useLocalForage<TState = any>(
   const client = clientCache.get(context) || localForage;
 
   useEffect(() => {
-    setLoding(true);
+    setLoading(true);
     client
       .getItem<TState>(key)
       .then((val: any) => {
         if (val !== null) {
           setValue(val);
         }
-        setLoding(false);
+        setLoading(false);
       })
       .catch((err) => {
-        setLoding(false);
-        throw new Error(err);
+        setLoading(false);
+        console.error(err);
       });
   }, []);
 
@@ -52,20 +48,19 @@ export function useLocalForage<TState = any>(
         setValue(val);
       })
       .catch((err) => {
-        throw new Error(err);
+        if (!!options?.errorSetHandler) {
+          options.errorSetHandler(err);
+        } else {
+          console.error(err);
+        }
       });
   };
 
   const remove = () => {
-    client
-      .removeItem(key)
-      .then(() => {
-        setValue(undefined);
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
+    client.removeItem(key).then(() => {
+      setValue(undefined);
+    });
   };
 
-  return { value, set, remove, loding };
+  return { value, set, remove, loading };
 }
