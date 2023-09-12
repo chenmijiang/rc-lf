@@ -1,4 +1,4 @@
 import { useLocalForage } from './useLocalForage';
-import { RCLocalForageProvider } from './RCLocalForage';
+import { LocalForageProvider } from './LocalForageProvider';
 
-export { useLocalForage, RCLocalForageProvider };
+export { useLocalForage, LocalForageProvider };

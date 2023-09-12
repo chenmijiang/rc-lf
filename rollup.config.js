@@ -3,36 +3,50 @@ import commonjs from '@rollup/plugin-commonjs';
 import esbuild from 'rollup-plugin-esbuild';
 import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
+import terser from '@rollup/plugin-terser';
+import dts from 'rollup-plugin-dts';
 
-export const file = (type) => `dist/index.${type}.js`;
+const input = 'src/index.ts';
+const name = 'ReactLocalForage';
 
-export default {
-  input: 'src/index.ts',
-  output: [
-    {
-      name: 'rc-lf',
-      file: file('umd'),
-      format: 'umd',
-      globals: {
-        react: 'React',
+export default [
+  {
+    input,
+    output: [
+      {
+        file: 'dist/index.js',
+        format: 'esm',
       },
+      {
+        name,
+        file: 'dist/index.umd.js',
+        format: 'umd',
+        globals: {
+          react: 'React',
+        },
+      },
+    ],
+    external: ['react', 'react-dom'],
+    plugins: [
+      typescript(),
+      resolve({
+        preferBuiltins: true,
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      }),
+      commonjs(),
+      esbuild(),
+      babel({
+        babelHelpers: 'bundled',
+      }),
+      terser(),
+    ],
+  },
+  {
+    input,
+    output: {
+      file: 'dist/index.d.ts',
+      format: 'es',
     },
-    {
-      file: file('esm'),
-      format: 'esm',
-    },
-  ],
-  external: ['react', 'react-dom'],
-  plugins: [
-    babel({
-      babelHelpers: 'bundled',
-    }),
-    typescript(),
-    resolve({
-      preferBuiltins: true,
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    }),
-    commonjs(),
-    esbuild(),
-  ],
-};
+    plugins: [dts()],
+  },
+];
