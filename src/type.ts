@@ -18,6 +18,7 @@ export interface LocalForageContextProps {
 export type ExtraOptions<T> = {
   // expire?: number;
   defaultValue?: T;
+  target?: LocalForageOptions;
   errorSetHandler?: (err: any) => void;
   errorGetHandler?: (err: any) => void;
 };

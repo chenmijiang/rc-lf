@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
 import localForage from 'localforage';
-import { LocalForageContext, clientCache } from './LocalForageProvider';
+import { LocalForageContext } from './LocalForageProvider';
+import { clientCache } from './extra';
 
 import { ExtraOptions } from './type';
-
-export const isBrowser = typeof window !== 'undefined';
+import { isBrowser } from './utils';
 
 export function useLocalForage<TState = any>(key: string, options?: ExtraOptions<TState>) {
-  const { defaultValue } = options ?? {};
+  const { defaultValue, target } = options ?? {};
   // determine whether it is a browser environment, if not, return the default value
   if (!isBrowser) {
     return { value: defaultValue, set: () => {}, remove: () => {}, loading: true };
@@ -17,13 +17,19 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
   // If defaultValue is set, it will override the initial value of the Provider
   const globalKeyValue = initialValues?.[key];
   const [value, setValue] = useState<TState>(defaultValue ?? globalKeyValue);
-  // if the config is not set, use the default localForage
+  // if the config is not set, use the default localForage instance
   let client: LocalForage = localForage;
-  if (Object.keys(config).length > 0) {
-    if (!clientCache.has(config)) {
-      clientCache.set(config, localForage.createInstance(config));
+  let configString = JSON.stringify(config);
+  if (configString !== '{}') {
+    if (!clientCache.has(configString)) {
+      clientCache.set(configString, localForage.createInstance(config));
     }
-    client = clientCache.get(config) as LocalForage;
+    let targetString = JSON.stringify(target);
+    if (!!targetString && clientCache.has(targetString)) {
+      client = clientCache.get(targetString) as LocalForage;
+    } else {
+      client = clientCache.get(configString) as LocalForage;
+    }
   }
 
   const [loading, setLoading] = useState<boolean>(false);
