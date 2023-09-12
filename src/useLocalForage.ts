@@ -1,10 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import localForage from 'localforage';
-import { LocalForageContext } from './LocalForageProvider';
+import { LocalForageContext, clientCache } from './LocalForageProvider';
 
 import { ExtraOptions } from './type';
-
-export const clientCache = new Map<LocalForageOptions, LocalForage>();
 
 export const isBrowser = typeof window !== 'undefined';
 

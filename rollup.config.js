@@ -6,32 +6,28 @@ import babel from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
 import dts from 'rollup-plugin-dts';
 
-export const file = (type) => `dist/index.${type}.js`;
-
 const input = 'src/index.ts';
+const name = 'ReactLocalForage';
 
 export default [
   {
     input,
     output: [
       {
-        name: 'rc-lf',
-        file: file('umd'),
+        file: 'dist/index.js',
+        format: 'esm',
+      },
+      {
+        name,
+        file: 'dist/index.umd.js',
         format: 'umd',
         globals: {
           react: 'React',
         },
       },
-      {
-        file: file('esm'),
-        format: 'esm',
-      },
     ],
     external: ['react', 'react-dom'],
     plugins: [
-      babel({
-        babelHelpers: 'bundled',
-      }),
       typescript(),
       resolve({
         preferBuiltins: true,
@@ -39,6 +35,9 @@ export default [
       }),
       commonjs(),
       esbuild(),
+      babel({
+        babelHelpers: 'bundled',
+      }),
       terser(),
     ],
   },
