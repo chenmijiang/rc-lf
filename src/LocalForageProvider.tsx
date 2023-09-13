@@ -21,5 +21,3 @@ export const LocalForageProvider = ({
     </LocalForageContext.Provider>
   );
 };
-
-export const clientCache = new Map<LocalForageOptions, LocalForage>();
