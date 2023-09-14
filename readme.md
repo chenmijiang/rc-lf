@@ -1,16 +1,16 @@
-# rc-lf(react-localforage)
+# rc-localforage
 
-rc-lf 是 localForage 在 React 的封装包，它提供了一种更符合 React 的使用风格(functional component style)，同时保持了 localForage 的大部分功能
+rc-localforage 是 localForage 在 React 的封装包，它提供了一种更符合 React 的使用风格(functional component style)，同时保持了 localForage 的大部分功能
 
 > localForage is a fast and simple storage library for JavaScript. localForage improves the offline experience of your web app by using asynchronous storage (IndexedDB or WebSQL) with a simple, localStorage-like API. Learn more about [localForage](https://localforage.github.io/localForage/#data-api-clear).
 
-# how to use rc-lf
+# how to use rc-localforage
 
-有两种使用 rc-lf 的方法。 一种是直接使用 rc-lf 提供的 useLocalForage。 另一种是 `LocalForageProvider` 和 `useLocalForage` 的组合。 [了解配置](#configuration)。
+有两种使用 rc-localforage 的方法。 一种是直接使用 rc-localforage 提供的 useLocalForage。 另一种是 `LocalForageProvider` 和 `useLocalForage` 的组合。 [了解配置](#configuration)。
 
 ```tsx
 import React from 'react';
-import { useLocalForage } from 'rc-lf';
+import { useLocalForage } from 'rc-localforage';
 
 const Component = () => {
   const { value, set, remove, loading } = useLocalForage('key');
@@ -38,7 +38,7 @@ const App = () => {
 
 # configuration
 
-rc-lf 保持和 localForage 一致的配置，并且进行了扩展
+rc-localforage 保持和 localForage 一致的配置，并且进行了扩展
 
 ## useLocalForage(key: string, options?: ExtraOptions)
 
