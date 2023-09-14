@@ -1,5 +1,5 @@
 {
-  "name": "rc-lf",
+  "name": "rc-localforage",
   "version": "0.1.1",
   "description": "",
   "main": "./dist/index.js",
@@ -12,14 +12,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "chenmijiang",
-  "homepage": "https://github.com/chenmijiang/rc-lf",
+  "homepage": "https://github.com/chenmijiang/rc-localforage",
   "license": "ISC",
   "keywords": [
     "react",
     "react-component",
     "react-hooks",
     "react-localforage",
-    "rc-lf"
+    "rc-localforage"
   ],
   "files": [
     "readme.md",
