@@ -31,8 +31,19 @@ export function removeDataStoreItems(config: LocalForageOptions = {}) {
   let client: LocalForage = localForage;
   let configString = JSON.stringify(config);
   if (configString !== '{}') {
-    clientCache.get(configString)?.clear();
+    client.dropInstance(config).then(() => {
+      clientCache.set(configString, client.createInstance(config));
+    });
     return;
   }
   client.clear();
 }
+
+/**
+ * data storage driver
+ */
+export const driver = {
+  WEBSQL: localForage.WEBSQL,
+  INDEXEDDB: localForage.INDEXEDDB,
+  LOCALSTORAGE: localForage.LOCALSTORAGE,
+};
