@@ -1,7 +1,6 @@
 .DS_Store
 .swp
 node_modules
-dist
 
 # Logs + Sauce Labs Tests
 *.log
