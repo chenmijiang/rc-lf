@@ -1,8 +1,6 @@
 import localForage from 'localforage';
-
+import clientCache from './ClientCache';
 import { isBrowser } from './utils';
-
-export const clientCache = new Map<string, LocalForage>();
 
 /**
  * Drop the localForage instance
@@ -13,8 +11,8 @@ export function dropDataStore(config: LocalForageOptions = {}) {
   }
   let client: LocalForage = localForage;
   let configString = JSON.stringify(config);
+  clientCache.removeCache(configString);
   if (configString !== '{}') {
-    clientCache.delete(configString);
     client.dropInstance(config);
     return;
   }
@@ -30,9 +28,10 @@ export function removeDataStoreItems(config: LocalForageOptions = {}) {
   }
   let client: LocalForage = localForage;
   let configString = JSON.stringify(config);
+  clientCache.removeCache(configString);
   if (configString !== '{}') {
     client.dropInstance(config).then(() => {
-      clientCache.set(configString, client.createInstance(config));
+      clientCache.addCache(configString, client.createInstance(config));
     });
     return;
   }

@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import localForage from 'localforage';
 import { LocalForageContext } from './LocalForageProvider';
-import { clientCache } from './extra';
+import clientCache from './ClientCache';
 
 import { ExtraOptions } from './type';
 import { isBrowser } from './utils';
@@ -18,21 +18,22 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
   const globalKeyValue = initialValues?.[key];
   const [value, setValue] = useState<TState>(defaultValue ?? globalKeyValue);
   // if the config is not set, use the default localForage instance
-  let client: LocalForage = localForage;
-  let configString = JSON.stringify(config);
-  if (configString !== '{}') {
-    if (!clientCache.has(configString)) {
-      clientCache.set(configString, localForage.createInstance(config));
+  const client = useMemo(() => {
+    let cache: LocalForage = localForage;
+    let configString = JSON.stringify(config);
+    if (!clientCache.hasCache(configString)) {
+      clientCache.addCache(configString, localForage.createInstance(config));
     }
     let targetString = JSON.stringify(target);
-    if (!!targetString && clientCache.has(targetString)) {
-      client = clientCache.get(targetString) as LocalForage;
+    if (!!targetString && clientCache.hasCache(targetString)) {
+      cache = clientCache.getCache(targetString) as LocalForage;
     } else {
-      client = clientCache.get(configString) as LocalForage;
+      cache = clientCache.getCache(configString) as LocalForage;
     }
-  }
+    return cache;
+  }, []);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const set = (val: TState) => {
     client
@@ -42,8 +43,10 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
       })
       .then((val: TState) => {
         setValue(val);
+        setLoading(false);
       })
       .catch((err) => {
+        setLoading(false);
         if (!!options?.errorSetHandler) {
           options.errorSetHandler(err);
         } else {
@@ -52,6 +55,7 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
       });
   };
 
+  // initialize the value
   useEffect(() => {
     setLoading(true);
     client
@@ -59,10 +63,10 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
       .then((val: any) => {
         if (val !== null) {
           setValue(val);
+          setLoading(false);
         } else {
           set(value);
         }
-        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -72,6 +76,31 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
           console.error(err);
         }
       });
+  }, []);
+
+  useEffect(() => {
+    let configKey = target ? JSON.stringify(target) : JSON.stringify(config);
+
+    const handleStorageChange = () => {
+      if (!clientCache.hasCache(configKey)) {
+        setValue(undefined!);
+        return;
+      }
+      clientCache
+        .getCache(configKey)
+        ?.length()
+        .then((length) => {
+          if (length === 0) {
+            setValue(undefined!);
+          }
+        });
+    };
+
+    clientCache.addEventListener('change', handleStorageChange);
+
+    return () => {
+      clientCache.removeEventListener('change', handleStorageChange);
+    };
   }, []);
 
   const remove = () => {
