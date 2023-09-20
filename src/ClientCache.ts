@@ -33,6 +33,10 @@ class ClientCache {
     this.triggerEvent('change');
   }
 
+  public refleshCache(): void {
+    this.triggerEvent('change');
+  }
+
   public addEventListener(event: string, listener: () => void): void {
     if (typeof this.events[event] !== 'object') {
       this.events[event] = [];

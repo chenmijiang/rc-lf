@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import localForage from 'localforage';
 import { LocalForageContext } from './LocalForageProvider';
 import clientCache from './ClientCache';
@@ -17,25 +17,11 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
   // If defaultValue is set, it will override the initial value of the Provider
   const globalKeyValue = initialValues?.[key];
   const [value, setValue] = useState<TState>(defaultValue ?? globalKeyValue);
-  // if the config is not set, use the default localForage instance
-  const client = useMemo(() => {
-    let cache: LocalForage = localForage;
-    let configString = JSON.stringify(config);
-    if (!clientCache.hasCache(configString)) {
-      clientCache.addCache(configString, localForage.createInstance(config));
-    }
-    let targetString = JSON.stringify(target);
-    if (!!targetString && clientCache.hasCache(targetString)) {
-      cache = clientCache.getCache(targetString) as LocalForage;
-    } else {
-      cache = clientCache.getCache(configString) as LocalForage;
-    }
-    return cache;
-  }, []);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   const set = (val: TState) => {
+    const client = getClient(config, target);
     client
       .setItem(key, val)
       .then(() => {
@@ -57,6 +43,7 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
 
   // initialize the value
   useEffect(() => {
+    const client = getClient(config, target);
     setLoading(true);
     client
       .getItem<TState>(key)
@@ -104,10 +91,26 @@ export function useLocalForage<TState = any>(key: string, options?: ExtraOptions
   }, []);
 
   const remove = () => {
+    const client = getClient(config, target);
     client.removeItem(key).then(() => {
       setValue(undefined!);
     });
   };
 
   return { value, set, remove, loading };
+}
+
+function getClient(config: LocalForageOptions, target?: LocalForageOptions) {
+  let cache: LocalForage = localForage;
+  let configString = JSON.stringify(config);
+  if (!clientCache.hasCache(configString)) {
+    clientCache.addCache(configString, localForage.createInstance(config));
+  }
+  let targetString = JSON.stringify(target);
+  if (!!targetString && clientCache.hasCache(targetString)) {
+    cache = clientCache.getCache(targetString) as LocalForage;
+  } else {
+    cache = clientCache.getCache(configString) as LocalForage;
+  }
+  return cache;
 }
