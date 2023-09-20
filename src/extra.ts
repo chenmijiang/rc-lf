@@ -3,39 +3,38 @@ import clientCache from './ClientCache';
 import { isBrowser } from './utils';
 
 /**
- * Drop the localForage instance
+ * get the client
  */
-export function dropDataStore(config: LocalForageOptions = {}) {
+function _dataStore(config: LocalForageOptions = {}, capture: boolean) {
   if (!isBrowser) {
     return;
   }
-  let client: LocalForage = localForage;
   let configString = JSON.stringify(config);
-  clientCache.removeCache(configString);
-  if (configString !== '{}') {
-    client.dropInstance(config);
-    return;
+  let client = clientCache.getCache(configString);
+  if (!client && capture) {
+    client = localForage;
   }
-  client.dropInstance();
+  return client;
 }
 
 /**
- * Removes every key from the database
+ * Drop the localForage instance
  */
-export function removeDataStoreItems(config: LocalForageOptions = {}) {
-  if (!isBrowser) {
-    return;
-  }
-  let client: LocalForage = localForage;
+export function dropDataStore(config: LocalForageOptions = {}, capture: boolean = false) {
+  let client = _dataStore(config, capture);
   let configString = JSON.stringify(config);
-  clientCache.removeCache(configString);
-  if (configString !== '{}') {
-    client.dropInstance(config).then(() => {
-      clientCache.addCache(configString, client.createInstance(config));
-    });
-    return;
-  }
-  client.clear();
+  client?.dropInstance();
+  clientCache?.removeCache(configString);
+}
+
+/**
+ * Removes all keys from the database
+ */
+export function removeDataStoreItems(config: LocalForageOptions = {}, capture: boolean = false) {
+  let client = _dataStore(config, capture);
+  client?.clear().then(() => {
+    clientCache.refleshCache();
+  });
 }
 
 /**

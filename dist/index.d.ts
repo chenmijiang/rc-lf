@@ -34,11 +34,11 @@ declare const LocalForageProvider: ({ children, config, initialValues, }: LocalF
 /**
  * Drop the localForage instance
  */
-declare function dropDataStore(config?: LocalForageOptions): void;
+declare function dropDataStore(config?: LocalForageOptions, capture?: boolean): void;
 /**
- * Removes every key from the database
+ * Removes all keys from the database
  */
-declare function removeDataStoreItems(config?: LocalForageOptions): void;
+declare function removeDataStoreItems(config?: LocalForageOptions, capture?: boolean): void;
 /**
  * data storage driver
  */

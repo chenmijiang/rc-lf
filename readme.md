@@ -48,42 +48,44 @@ rc-localforage 保持和 localForage 一致的配置，并且进行了扩展
 
 ### ExtraOptions
 
-|      参数       |         说明         |                          类型                          | 默认值 |
-| :-------------: | :------------------: | :----------------------------------------------------: | :----: |
-|  defaultValue   |       初始化值       |                         TState                         |   -    |
-|     target      |   localForage 配置   | LocalForageOptions |   -    |
-| errorSetHandler | set 方法错误处理函数 |                  (error: any) => void                  |   -    |
-| errorGetHandler | get 方法错误处理函数 |                  (error: any) => void                  |   -    |
+|      参数       |         说明         |         类型         | 默认值 |
+| :-------------: | :------------------: | :------------------: | :----: |
+|  defaultValue   |       初始化值       |        TState        |   -    |
+|     target      |   localForage 配置   |  LocalForageOptions  |   -    |
+| errorSetHandler | set 方法错误处理函数 | (error: any) => void |   -    |
+| errorGetHandler | get 方法错误处理函数 | (error: any) => void |   -    |
 
 ## LocalForageProvider
 
 在 LocalForageProvider 配置的 config 和 initialValues 会传递给内部的 useLocalForage，并创建 localForage 实例
 
-|     参数      |       说明       |                         类型                          | 默认值 |
-| :-----------: | :--------------: | :---------------------------------------------------: | :----: |
-|    config     | localForage 配置 | LocalForageOptions |   {}   |
-| initialValues |     初始化值     |                { [key: string]: any }                 |   {}   |
-|   children    |      子元素      |                    React.ReactNode                    |   -    |
+|     参数      |       说明       |          类型          | 默认值 |
+| :-----------: | :--------------: | :--------------------: | :----: |
+|    config     | localForage 配置 |   LocalForageOptions   |   {}   |
+| initialValues |     初始化值     | { [key: string]: any } |   {}   |
+|   children    |      子元素      |    React.ReactNode     |   -    |
 
 ## dropDataStore
 
 删除指定数据存储，没有指定数据存储时，删除默认数据存储
 
-|  参数  | 说明 |                         类型                          | 默认值 |
-| :----: | :--: | :---------------------------------------------------: | :----: |
-| config | 可选 | LocalForageOptions |   {}   |
+|  参数   |          说明          |        类型        | 默认值 |
+| :-----: | :--------------------: | :----------------: | :----: |
+| config  |          可选          | LocalForageOptions |   {}   |
+| capture | 默认实例捕获处理，可选 |      boolean       | false  |
 
 ## removeDataStoreItems
 
 清除数据存储的所有数据，没有指定数据存储时，清除默认数据存储的所有数据。
 
-|  参数  | 说明 |                         类型                          | 默认值 |
-| :----: | :--: | :---------------------------------------------------: | :----: |
-| config | 可选 | LocalForageOptions |   {}   |
+|  参数   |          说明          |        类型        | 默认值 |
+| :-----: | :--------------------: | :----------------: | :----: |
+| config  |          可选          | LocalForageOptions |   {}   |
+| capture | 默认实例捕获处理，可选 |      boolean       | false  |
 
 # other
 
-## 关于LocalForageOptions
+## 关于 LocalForageOptions
 
 |    参数     |          说明          |  类型  |                                默认值                                 |
 | :---------: | :--------------------: | :----: | :-------------------------------------------------------------------: |
